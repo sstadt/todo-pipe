@@ -6,6 +6,54 @@
  */
 
 module.exports = {
-	
-};
 
+  index(req, res) {
+    Todo.find(function (err, items) {
+      if (err) {
+        res.error(err);
+      } else {
+        Todo.subscribe(req.socket, items);
+        res.json(items);
+      }
+    });
+  },
+
+  create(req, res) {
+    var name = req.param('name');
+
+    Todo.create({ name: name }, function (err, item) {
+      if (err) {
+        res.error(err);
+      } else {
+        Todo.subscribe(req.socket, item);
+        res.json(item);
+      }
+    });
+  },
+
+  update(req, res) {
+    var id = req.param('id');
+    var checked = req.param('checked');
+
+    Todo.update(id, { checked: checked }, function (err, item) {
+      if (err) {
+        res.error(err);
+      } else {
+        res.json(item[0]);
+      }
+    });
+  },
+
+  destroy(req, res) {
+    var id = req.param(id);
+
+    Todo.destroy(id, function (err) {
+      if (err) {
+        res.error(err);
+      } else {
+        res.send(200);
+      }
+    });
+  }
+
+};

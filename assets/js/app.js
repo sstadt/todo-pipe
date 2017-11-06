@@ -32,11 +32,17 @@
 
     var $btn = $(event.currentTarget);
     var id = $btn.data('id');
-    var checked = !$btn.hasClass('checked');
+    var checked = $btn.hasClass('checked');
 
-    io.socket.post(`/todo/${id}`, { checked: checked }, function (response) {
-      var $item = $itemList.find(`[data-id="${id}"]`);
-      response.checked === true ? $item.addClass('checked') : $item.removeClass('checked');
-    });
+    if (checked) {
+      io.socket.post(`/todo/destroy`, { id }, function () {
+        $itemList.find(`[data-id="${id}"]`).closest('li').remove();
+      });
+    } else {
+      io.socket.post(`/todo/${id}`, { checked: true }, function (response) {
+        var $item = $itemList.find(`[data-id="${id}"]`);
+        response.checked === true ? $item.addClass('checked') : $item.removeClass('checked');
+      });
+    }
   });
 })(window.jQuery, window.io);
