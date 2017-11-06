@@ -39,18 +39,26 @@ module.exports = {
       if (err) {
         res.error(err);
       } else {
+        Todo.message(id, {
+          type: 'itemUpdated',
+          data: { item: item[0] }
+        });
         res.json(item[0]);
       }
     });
   },
 
   destroy(req, res) {
-    var id = req.param(id);
+    var id = req.param('id');
 
     Todo.destroy(id, function (err) {
       if (err) {
         res.error(err);
       } else {
+        Todo.message(id, {
+          type: 'itemDestroyed',
+          data: { itemId: id }
+        });
         res.send(200);
       }
     });

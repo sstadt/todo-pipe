@@ -35,14 +35,27 @@
     var checked = $btn.hasClass('checked');
 
     if (checked) {
-      io.socket.post(`/todo/destroy`, { id }, function () {
-        $itemList.find(`[data-id="${id}"]`).closest('li').remove();
-      });
+      io.socket.post(`/todo/destroy`, { id });
     } else {
-      io.socket.post(`/todo/${id}`, { checked: true }, function (response) {
-        var $item = $itemList.find(`[data-id="${id}"]`);
-        response.checked === true ? $item.addClass('checked') : $item.removeClass('checked');
-      });
+      io.socket.post(`/todo/update`, { id: id, checked: true });
+    }
+  });
+
+  function itemUpdated(item) {
+    var $item = $itemList.find(`[data-id="${item.id}"]`);
+    if (item.checked === true) $item.addClass('checked');
+  }
+
+  function itemDestroyed(id) {
+    $itemList.find(`[data-id="${id}"]`).closest('li').remove();
+  }
+
+  // notifications
+  io.socket.on('todo', function (message) {
+    if (message.data.type === 'itemUpdated') {
+      itemUpdated(message.data.data.item);
+    } else if (message.data.type === 'itemDestroyed') {
+      itemDestroyed(message.data.data.itemId);
     }
   });
 })(window.jQuery, window.io);
