@@ -26,7 +26,7 @@
     response.forEach((item) => addItemToDOM(item));
   });
 
-  // add item
+  // add item form handler
   $addItemForm.submit(function (event) {
     event.preventDefault();
 
@@ -38,7 +38,7 @@
     });
   });
 
-  // update item
+  // update item handler
   $itemList.on('click', 'a', function (event) {
     event.preventDefault();
 
